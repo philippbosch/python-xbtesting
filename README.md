@@ -7,7 +7,11 @@ Disclaimer: I am in no way associated with CrossBrowserTesting.com, LLC.
 
 ## Installation
 
-    $ pip install -e git+http://github.com/philippbosch/xbtesting.git#egg=xbtesting
+    $ pip install python-xbtesting
+
+### Prerequisites
+
+* simplejson
 
 
 ## Usage
