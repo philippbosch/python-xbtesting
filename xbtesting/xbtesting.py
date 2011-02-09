@@ -11,13 +11,17 @@ class XBTestingBase(object):
     attrs = {}
     
     def __init__(self, attrs):
-        self.attrs.update(attrs)
+        self.attrs = attrs
         for name in self.required_attrs:
             if name not in self.attrs:
                 raise KeyError, "required attribute '%s' missing" % name
         for name in self.datetime_attrs:
             if (name in self.attrs) and (type(self.attrs[name]) == str):
-                self.attrs[name] = datetime.strptime(self.attrs[name], "%Y-%m-%d %H:%M:%S")
+                date_string = self.attrs[name]
+                if len(date_string) == 16:
+                    # the 'finished_date' attribute of a test version result lacks seconds somehow. let's add them.
+                    date_string += ':00'
+                self.attrs[name] = datetime.strptime(date_string, "%Y-%m-%d %H:%M:%S")
     
     
     def __getattr__(self, name):
@@ -75,29 +79,29 @@ class XBTest(XBTestingBase):
     datetime_attrs = ('test_date',)
     
     def get_versions(self):
-        data = self._api_request('/screenshots/%s/show' % self.attrs['id'])
+        data = self._api_request('/screenshots/%s/show' % self.id)
         versions = []
         for version in data['test']['versions']:
             attrs = version['version']
-            attrs['_test'] = self
+            attrs['test'] = self
             versions.append(XBTestVersion(attrs=attrs))
         return versions
 
 
 class XBTestVersion(XBTestingBase):
-    required_attrs = ('_test', 'id',)
+    required_attrs = ('test', 'id',)
     datetime_attrs = ('version_date',)
-
+    
     def get_results(self):
-        data = self._api_request('/screenshots/%s/version/%s/show' % (self.attrs['_test'].attrs['id'], self.attrs['id']))
+        data = self._api_request('/screenshots/%s/version/%s/show' % (self.test.id, self.id))
         results = []
         for result in data['test']['versions'][0]['version']['results']:
             attrs = result['result']
-            attrs['_testversion'] = self
+            attrs['testversion'] = self
             results.append(XBTestVersionResult(attrs=attrs))
         return results
 
 
 class XBTestVersionResult(XBTestingBase):
-    required_attrs = ('_testversion', 'id',)
+    required_attrs = ('testversion', 'id',)
     datetime_attrs = ('start_date', 'finished_date',)
