@@ -4,6 +4,19 @@ import simplejson
 import urllib2
 
 
+def fix_datetime_format(date_string):
+    """
+    Some datetime values we get from the API are broken, 
+    e.g. '2011-01-7 08:24'. This function fixes them.
+    """
+    parts = re.split(r'[\-\: ]', date_string)
+    for i in range(0, len(parts)):
+        parts[i] = int(parts[i])
+    if len(parts) == 5:
+        parts.append(0)
+    return "%04d-%02d-%02d %02d:%02d:%02d" % tuple(parts)
+
+
 class XBTestingBase(object):
     api_base_url = "http://crossbrowsertesting.com/api%(path)s?format=json"
     required_attrs = ()
@@ -17,12 +30,8 @@ class XBTestingBase(object):
                 raise KeyError, "required attribute '%s' missing" % name
         for name in self.datetime_attrs:
             if (name in self.attrs) and (type(self.attrs[name]) == str):
-                date_string = self.attrs[name]
-                if len(date_string) == 16:
-                    # the 'finished_date' attribute of a test version result lacks seconds somehow. let's add them.
-                    date_string += ':00'
+                date_string = fix_datetime_format(self.attrs[name])
                 self.attrs[name] = datetime.strptime(date_string, "%Y-%m-%d %H:%M:%S")
-    
     
     def __getattr__(self, name):
         if name in self.attrs:
