@@ -3,7 +3,6 @@ from setuptools import setup, find_packages
 
 README = os.path.join(os.path.dirname(__file__), 'README.md')
 long_description = open(README).read().strip() + "\n\n"
-print long_description
 def md2stx(s):
     import re
     s = re.sub(':\n(\s{8,10})', r'::\n\1', s)
