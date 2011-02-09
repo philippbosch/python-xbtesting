@@ -52,16 +52,8 @@ class XBTestingBase(object):
         return self.decode_json(json)
     
     def decode_json(self, json):
-        json = self.sanitize_json(json)
         data = simplejson.loads(json)
         return data
-    
-    def sanitize_json(self, json):
-        """
-        Needed because the crossbrowsertesting.com API currently (2011-02-09) returns incorrect JSON.
-        http://twitter.com/philippbosch/status/35300397857902593
-        """
-        return re.sub(r'html_(\d+)', '\\1', json)
 
 
 class XBTesting(XBTestingBase):
