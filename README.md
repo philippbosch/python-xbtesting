@@ -1,11 +1,13 @@
-# xbtesting
+python-xbtesting
+================
 
 A Python library to talk to the API provided by [CrossBrowserTesting.com](http://crossbrowsertesting.com/).
 
 Disclaimer: I am in no way associated with CrossBrowserTesting.com, LLC.
 
 
-## Installation
+Installation
+------------
 
     $ pip install python-xbtesting
 
@@ -14,7 +16,8 @@ Disclaimer: I am in no way associated with CrossBrowserTesting.com, LLC.
 * simplejson
 
 
-## Usage
+Usage
+-----
 
 ### Setup
 
