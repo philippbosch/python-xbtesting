@@ -10,6 +10,8 @@ def fix_datetime_format(date_string):
     e.g. '2011-01-7 08:24'. This function fixes them.
     """
     parts = re.split(r'[\-\: ]', date_string)
+    if len(parts) not in [5,6]:
+        return ""
     for i in range(0, len(parts)):
         parts[i] = int(parts[i])
     if len(parts) == 5:
@@ -31,7 +33,10 @@ class XBTestingBase(object):
         for name in self.datetime_attrs:
             if (name in self.attrs) and (type(self.attrs[name]) == str):
                 date_string = fix_datetime_format(self.attrs[name])
-                self.attrs[name] = datetime.strptime(date_string, "%Y-%m-%d %H:%M:%S")
+                if len(date_string):
+                    self.attrs[name] = datetime.strptime(date_string, "%Y-%m-%d %H:%M:%S")
+                else:
+                    self.attrs[name] = None
     
     def __getattr__(self, name):
         if name in self.attrs:
